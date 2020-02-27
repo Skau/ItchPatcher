@@ -1,6 +1,7 @@
 # ItchPatcher
 
 Updates itch projects automatically when new GitHub releases are made!
+
 The program will listen to release event webhooks from GiHub. 
 This all happens locally!
 
