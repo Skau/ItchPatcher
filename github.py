@@ -1,18 +1,19 @@
 import os
 import requests
+from collections import namedtuple
 
 BASE_URL = "https://api.github.com"
 
+ReleaseData = namedtuple("ReleaseData", "file_path repository_name")
 
 class GitHub:
-    def __init__(self):
+    def __init__(self, config_parser) -> ReleaseData:
         self.session = requests.session()
         self.session.headers.update({'User-Agent': 'Itch Updater'})
         self.session.headers.update({'Accept': 'application/vnd.github.v3+json'})
         self.session.headers.update({'Content-Type': 'application/json'})
-        file = open("token.txt")
-        token = file.readline()
-        file.close()
+        config_parser.read("config.ini")
+        token = config_parser['DEFAULT']['PersonalAccessToken']
         self.session.auth = ('access_token', token)
         r = self.session.get(url=BASE_URL + "/user")
         self.authorized = r.status_code == requests.codes.ok
@@ -40,7 +41,7 @@ class GitHub:
         r = self.session.get(asset_url)
         if r.status_code != requests.codes.ok:
             print("Could not retrieve file!")
-            return;
+            return
 
         current_directory = os.getcwd()
         downloads_path = os.path.join(current_directory, r'downloads')
@@ -51,7 +52,8 @@ class GitHub:
         binary_format = bytearray(file_binary)
         open(file_path, 'w+b').write(binary_format)
         print("Temporary file downloaded to " + file_path)
-        return file_path
+        data = ReleaseData(file_path, data['repository']['full_name'])
+        return data
 
 
 
