@@ -12,7 +12,17 @@ class GitHub:
         self.session.headers.update({'User-Agent': 'Itch Updater'})
         self.session.headers.update({'Accept': 'application/vnd.github.v3+json'})
         self.session.headers.update({'Content-Type': 'application/json'})
-        config_parser.read("config.ini")
+
+        if not os.path.exists('config.ini'):
+            f = open('config.ini', "w+")
+            f.close()
+            config_parser.read("config.ini")
+            print("Config file not setup. Please enter you personal access token")
+            token = input()
+            config_parser['DEFAULT'] = {'PersonalAccessToken': token}
+            with open('config.ini', 'w') as configfile:
+                config_parser.write(configfile)
+
         token = config_parser['DEFAULT']['PersonalAccessToken']
         self.session.auth = ('access_token', token)
         r = self.session.get(url=BASE_URL + "/user")

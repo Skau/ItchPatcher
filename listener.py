@@ -40,7 +40,7 @@ def webhook():
         if os.path.exists(downloads_path):
             shutil.rmtree(downloads_path)
             print("Removed temp file")
-        
+
         print("Done!")
         return '', 200
     else:
