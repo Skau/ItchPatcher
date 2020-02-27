@@ -3,12 +3,10 @@ import os
 import shutil
 from configparser import ConfigParser
 from flask import Flask, request, abort
-from itch import Itch
 from github import GitHub
 
 
 app = Flask(__name__)
-itch = Itch()
 config_parser = ConfigParser()
 github = GitHub(config_parser)
 

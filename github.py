@@ -19,11 +19,11 @@ class GitHub:
             config_parser.read("config.ini")
             print("Config file not setup. Please enter you personal access token")
             token = input()
-            config_parser['DEFAULT'] = {'PersonalAccessToken': token}
+            config_parser['DEFAULT'] = {'token': token}
             with open('config.ini', 'w') as configfile:
                 config_parser.write(configfile)
 
-        token = config_parser['DEFAULT']['PersonalAccessToken']
+        token = config_parser['DEFAULT']['token']
         self.session.auth = ('access_token', token)
         r = self.session.get(url=BASE_URL + "/user")
         self.authorized = r.status_code == requests.codes.ok
