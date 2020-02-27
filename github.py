@@ -31,7 +31,7 @@ class GitHub:
             json = r.json()
             print("Authorization successful! Authorized as " + json['login'])
         else:
-            print("Please provide a legit personal access token")
+            print("Please update config.ini with a legit personal access token.")
 
     def download_file(self, data):
         if not self.authorized:
