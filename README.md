@@ -12,7 +12,8 @@ This all happens locally!
 
 ## Setup
 To enable webhooks you need to add the webhook in the repositores you want ItchPatcher to listen to release events on.
-This can be done in your repository -> Settings -> Webhooks -> Add webhook
+This can be done in your repository -> Settings -> Webhooks -> Add webhook.
+
 The webhook to add would be your routing to your localhost.
 Example using ngrok:
 - Download ngrok from [here](https://ngrok.com/download).
