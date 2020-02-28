@@ -20,6 +20,7 @@ Example using ngrok:
 - cd to the location you put the .exe file
 - run *ngrok http 5000* (5000 means the port, and you can choose whatever, doesn't matter).
 - Then the session status will pop up, the forwading url which looks something like *https://xxxxx.ngrok.io* is the one to use as webhook.
+- When adding the webook on GitHub, make sure to check *Let me select individual events* and then *Releases*.
 
 When the webhook is setup you can download or clone this project.
 Then run *pip install -r requirements.txt* to install required packages.
@@ -39,3 +40,8 @@ you don't want to be prompted by ItchPatcher.
 
 Note: Currenly only supports compressed files, so remember to zip your packaged game before uploading them to the release.
 This is what butler recommends anyways for faster uploads.
+
+## Other commands
+
+- *$ listener.py help* - will print this readme.
+- *$ listener.py repo filepath* - will use the itch project associated with the repo (or prompt you to add it) in config.ini and patch the project with the specified file directly. This allows you to use the service without the webhook part, just as a shortcut instead of using butler directly.
