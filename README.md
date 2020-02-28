@@ -20,7 +20,7 @@ Example using ngrok:
 - Download ngrok from [here](https://ngrok.com/download).
 - cd to the location you put the .exe file
 - run *ngrok http 5000* (5000 means the port, and you can choose whatever, doesn't matter).
-- Then the session status will pop up, the forwading url which looks something like *https://xxxxx.ngrok.io* is the one to use as webhook.
+- Then the session status will pop up, the forwading url which looks something like *https://xxxxx.ngrok.io* is the one to use as webhook. With the free version the url will work for eight hours.
 - When adding the webook on GitHub, make sure to check *Let me select individual events* and then *Releases*.
 - Remember to keep ngrok running. If you close it you will need to setup a new webhook with the new forwarding url. This is not necessary if you have a paid version, which allows you to specify a custom url that will never change.
 
