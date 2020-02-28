@@ -3,6 +3,7 @@
 Updates itch projects automatically when new GitHub releases are made!
 
 The program will listen to release event webhooks from GitHub, download the release and then patch an itch project. 
+
 This all happens locally, so it's secure. No private info/data will be leaked anywhere.
 
 ## Requirements
