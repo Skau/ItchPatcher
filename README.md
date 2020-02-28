@@ -1,6 +1,6 @@
 # ItchPatcher
 
-Updates itch projects automatically when new GitHub releases are made!
+CLI tool that updates itch projects automatically when new GitHub releases are made!
 
 The program will listen to release event webhooks from GitHub, download the release and then patch an itch project. 
 
@@ -22,10 +22,12 @@ Example using ngrok:
 - run *ngrok http 5000* (5000 means the port, and you can choose whatever, doesn't matter).
 - Then the session status will pop up, the forwading url which looks something like *https://xxxxx.ngrok.io* is the one to use as webhook.
 - When adding the webook on GitHub, make sure to check *Let me select individual events* and then *Releases*.
+- Remember to keep ngrok running. If you close it you will need to setup a new webhook with the new forwarding url. This is not necessary if you have a paid version, which allows you to specify a custom url that will never change.
 
 When the webhook is setup you can download or clone this project.
 Then run *pip install -r requirements.txt* to install required packages.
-Finally run listener.py
+
+Finally run listener.py.
 
 The first time running, the ItchPatcher will ask for your personal access token. 
 This is so it will be possible to access your private repositories.
