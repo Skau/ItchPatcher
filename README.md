@@ -8,7 +8,7 @@ This all happens locally, so it's secure. No private info/data will be leaked an
 
 ## Requirements
 - Python3
-- butler, which is a itch.io command line tool found [here](https://itch.io/docs/butler/installing.html).
+- butler, which is an itch.io command line tool found [here](https://itch.io/docs/butler/installing.html).
 - ngrok or a similair tunneling service to route the webhook to your localhost
 
 ## Setup
