@@ -5,7 +5,7 @@ Updates itch projects automatically when new GitHub releases are made!
 The program will listen to release event webhooks from GiHub. 
 This all happens locally!
 
-# Requirements
+## Requirements
 - Python3
 - butler, which is a itch.io command line tool found [here](https://itch.io/docs/butler/installing.html).
 - ngrok or a similair tunneling service to route the webhook to your localhost
