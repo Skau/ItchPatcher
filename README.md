@@ -48,3 +48,4 @@ This is what butler recommends anyways for faster uploads.
 
 - *$ listener.py help* - will print this readme.
 - *$ listener.py repo filepath* - will use the itch project associated with the repo (or prompt you to add it) in config.ini and patch the project with the specified file directly. This allows you to use the service without the webhook part, just as a shortcut instead of using butler directly.
+- *$ listener.py stats* - Will iterate through all GitHub repositores and list overall commits, code additions and code deletions.
