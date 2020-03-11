@@ -5,7 +5,7 @@ from configparser import ConfigParser
 from flask import Flask, request, abort
 from github import GitHub
 
-
+github = GitHub()
 app = Flask(__name__)
 config_parser = ConfigParser()
 
@@ -17,8 +17,7 @@ def webhook():
         data = request.json
         if data['action'] == 'published':
             print("Release event (published) received")
-            authorize()
-            github = GitHub(config_parser)
+            check_token()
             release_data = github.download_file(data)
             name = release_data.repository_name
             file_path = release_data.file_path
@@ -47,7 +46,7 @@ def upload(file_path, repository_name):
     print("Butler push finished.")
 
 
-def authorize():
+def check_token():
     if not os.path.exists('config.ini'):
         f = open('config.ini', "w+")
         f.close()
@@ -57,24 +56,50 @@ def authorize():
         config_parser['DEFAULT'] = {'token': token}
         with open('config.ini', 'w') as configfile:
             config_parser.write(configfile)
+        configfile.close()
+
+    authorize()
+
+
+def authorize():
+    if github.authorize(config_parser=config_parser):
+        print("Authorization successful! Authorized as " + github.user)
+    else:
+        print("Please update config.ini with a legit personal access token.")
 
 
 def main():
     length = len(sys.argv)
-    if length > 1:
-        if length == 2 and sys.argv[1] == 'help' and os.path.exists('README.md'):
-            file = open('README.md', 'r')
-            for x in file:
-                print(x)
-            file.close()
-        elif length == 3:
-            repo = sys.argv[1]
-            authorize()
-            if os.path.exists(sys.argv[2]):
-                upload(sys.argv[2], repo)
-    else:
-        authorize()
+    if length == 1:
+        check_token()
         app.run()
+    elif length == 2:
+        if sys.argv[1] == 'help' and os.path.exists('README.md'):
+            readme()
+        elif sys.argv[1] == 'stats':
+            check_token()
+            stats()
+    elif length == 3:
+        check_token()
+        itch_instant_upload()
+
+
+def readme():
+    file = open('README.md', 'r')
+    for x in file:
+        print(x)
+    file.close()
+
+
+def stats():
+    github.get_repos()
+    pass
+
+
+def itch_instant_upload():
+    repo = sys.argv[1]
+    if os.path.exists(sys.argv[2]):
+        upload(sys.argv[2], repo)
 
 
 if __name__ == '__main__':
