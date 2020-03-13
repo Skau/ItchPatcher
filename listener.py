@@ -57,7 +57,6 @@ def check_token():
         with open('config.ini', 'w') as configfile:
             config_parser.write(configfile)
         configfile.close()
-
     authorize()
 
 
@@ -65,7 +64,37 @@ def authorize():
     if github.authorize(config_parser=config_parser):
         print("Authorization successful! Authorized as " + github.user)
     else:
+        print("Personal access token is not valid.")
         print("Please update config.ini with a legit personal access token.")
+
+
+def readme():
+    if os.path.exists('README.md'):
+        file = open('README.md', 'r')
+        for x in file:
+            print(x)
+        file.close()
+    else:
+        print("Could not find readme file.")
+
+
+def stats():
+    github.get_stats()
+    pass
+
+
+def itch_instant_upload():
+    path = sys.argv[3]
+    if not os.path.exists(path):
+        print("Error: Path not found!")
+        return
+    repo = sys.argv[2]
+    repos = github.get_repo_names()
+    for item in enumerate(repos):
+        if item[1] == repo:
+            upload(path, repo)
+            return
+    print("Error: Could not find repo")
 
 
 def main():
@@ -73,33 +102,18 @@ def main():
     if length == 1:
         check_token()
         app.run()
-    elif length == 2:
-        if sys.argv[1] == 'help' and os.path.exists('README.md'):
+    else:
+        arg1 = sys.argv[1]
+        if arg1 == 'help':
             readme()
-        elif sys.argv[1] == 'stats':
+        else:
             check_token()
-            stats()
-    elif length == 3:
-        check_token()
-        itch_instant_upload()
-
-
-def readme():
-    file = open('README.md', 'r')
-    for x in file:
-        print(x)
-    file.close()
-
-
-def stats():
-    github.get_repos()
-    pass
-
-
-def itch_instant_upload():
-    repo = sys.argv[1]
-    if os.path.exists(sys.argv[2]):
-        upload(sys.argv[2], repo)
+            if arg1 == 'stats':
+                stats()
+            elif arg1 == 'itch':
+                itch_instant_upload()
+            else:
+                print("Argument(s) not supported. use 'listener.py help' for more info")
 
 
 if __name__ == '__main__':

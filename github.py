@@ -1,4 +1,6 @@
 import os
+import time
+
 import requests
 from collections import namedtuple
 
@@ -62,43 +64,27 @@ class GitHub:
         data = ReleaseData(file_path, data['repository']['full_name'])
         return data
 
-    def get_repos(self):
+    def get_stats(self):
         if self.authorized:
             additions = 0
             deletions = 0
             commits = 0
-            print("Getting all repositories " + self.user + " is apart of..")
-
-            r = self.session.get(url=BASE_URL + "/user/repos")
-            link = str(r.headers['link'])
-            first = link[link.find('next'):]
-            result = first[first.find('page'):]
-            total_pages = int(result[5])
-            current_page = 1
-            done = 0
-            while current_page < total_pages:
-                r = self.session.get(url=BASE_URL + "/user/repos?per_page=100&page=" + str(current_page))
+            print("Getting total number of commits, code additions and deletions for " + self.user + "..")
+            repos = self.get_repos()
+            total_repos = len(repos)
+            self.print_progress_bar(0, total_repos, prefix='Progress:', suffix='Complete', length=50)
+            for i, item in enumerate(repos):
+                r = self.session.get(url=BASE_URL + "/repos/" + item['full_name'] + "/stats/contributors")
                 if r.status_code is not requests.codes.ok:
-                    print("Page not found")
+                    print("No data found")
                     continue
-
-                repos = r.json()
-                for repo in repos:
-                    print("Current repo: " + repo['full_name'])
-                    r = self.session.get(url=BASE_URL + "/repos/" + repo['full_name'] + "/stats/contributors")
-                    if r.status_code is not requests.codes.ok:
-                        print("No data found")
-                        continue
-
-                    stats = r.json()[0]
-                    for stat in stats['weeks']:
-                        additions += int(stat['a'])
-                        deletions += int(stat['d'])
-                        commits += int(stat['c'])
-                    done += 1
-                    print("Repos done: " + str(done))
-                current_page += 1
-
+                stats = r.json()[0]
+                for stat in stats['weeks']:
+                    additions += int(stat['a'])
+                    deletions += int(stat['d'])
+                    commits += int(stat['c'])
+                time.sleep(0.1)
+                self.print_progress_bar(i + 1, total_repos, prefix='Progress:', suffix='Complete', length=50)
             print("Finished")
             print("Total number of commits: " + str(commits))
             print("Total number of code additions: " + str(additions))
@@ -116,4 +102,40 @@ class GitHub:
                   "You should run this one more time just in case some data has not been fetched in a while"
                   " for a potentially more accurate result.")
         else:
-            print("Not authorized")
+            print("Personal access token is not valid.")
+            print("Please update config.ini with a legit personal access token.")
+
+    def get_repos(self):
+        if self.authorized:
+            ret = []
+            r = self.session.get(url=BASE_URL + "/user/repos")
+            link = str(r.headers['link'])
+            first = link[link.find('next'):]
+            result = first[first.find('page'):]
+            total_pages = int(result[5])
+            current_page = 1
+            done = 0
+            while current_page < total_pages:
+                r = self.session.get(url=BASE_URL + "/user/repos?per_page=100&page=" + str(current_page))
+                if r.status_code is not requests.codes.ok:
+                    print("Page not found")
+                    continue
+                ret += r.json()
+                current_page += 1
+            return ret
+
+    def get_repo_names(self):
+        repos = self.get_repos()
+        ret = []
+        for repo in repos:
+            ret.append(repo['full_name'])
+        return ret
+
+    def print_progress_bar(self, iteration, total, prefix='', suffix='', decimals=1, length=100, fill='█', print_end="\r"):
+        percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+        filled_length = int(length * iteration // total)
+        bar = fill * filled_length + '-' * (length - filled_length)
+        print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end=print_end)
+        # Print New Line on Complete
+        if iteration == total:
+            print()
