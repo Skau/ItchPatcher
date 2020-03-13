@@ -72,7 +72,7 @@ class GitHub:
             print("Getting total number of commits, code additions and deletions for " + self.user + "..")
             repos = self.get_repos()
             total_repos = len(repos)
-            self.print_progress_bar(0, total_repos, prefix='Progress:', suffix='Complete', length=50)
+            print_progress_bar(0, total_repos)
             for i, item in enumerate(repos):
                 r = self.session.get(url=BASE_URL + "/repos/" + item['full_name'] + "/stats/contributors")
                 if r.status_code is not requests.codes.ok:
@@ -84,7 +84,8 @@ class GitHub:
                     deletions += int(stat['d'])
                     commits += int(stat['c'])
                 time.sleep(0.1)
-                self.print_progress_bar(i + 1, total_repos, prefix='Progress:', suffix='Complete', length=50)
+                print_progress_bar(i + 1, total_repos)
+
             print("Finished")
             print("Total number of commits: " + str(commits))
             print("Total number of code additions: " + str(additions))
@@ -114,7 +115,6 @@ class GitHub:
             result = first[first.find('page'):]
             total_pages = int(result[5])
             current_page = 1
-            done = 0
             while current_page < total_pages:
                 r = self.session.get(url=BASE_URL + "/user/repos?per_page=100&page=" + str(current_page))
                 if r.status_code is not requests.codes.ok:
@@ -131,11 +131,12 @@ class GitHub:
             ret.append(repo['full_name'])
         return ret
 
-    def print_progress_bar(self, iteration, total, prefix='', suffix='', decimals=1, length=100, fill='█', print_end="\r"):
-        percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
-        filled_length = int(length * iteration // total)
-        bar = fill * filled_length + '-' * (length - filled_length)
-        print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end=print_end)
-        # Print New Line on Complete
-        if iteration == total:
-            print()
+
+def print_progress_bar(iteration, total):
+    percent = ("{0:." + str(1) + "f}").format(100 * (iteration / float(total)))
+    filled_length = int(50 * iteration // total)
+    bar = '█' * filled_length + '-' * (50 - filled_length)
+    print('\r%s |%s| %s%% %s' % ('Progress:', bar, percent, 'Complete'), end="\r")
+    # Print New Line on Complete
+    if iteration == total:
+        print()

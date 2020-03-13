@@ -90,8 +90,8 @@ def itch_instant_upload():
         return
     repo = sys.argv[2]
     repos = github.get_repo_names()
-    for item in enumerate(repos):
-        if item[1] == repo:
+    for i, item in enumerate(repos):
+        if item == repo:
             upload(path, repo)
             return
     print("Error: Could not find repo")
