@@ -55,7 +55,7 @@ class GitHub:
         file_binary = r.content
         binary_format = bytearray(file_binary)
         open(file_path, 'w+b').write(binary_format)
-        print("Temporary file downloaded to {}".format(file_path))
+        print(f'Temporary file downloaded to {file_path}')
         data = ReleaseData(file_path, data['repository']['full_name'])
         return data
 
@@ -68,13 +68,13 @@ class GitHub:
         additions = 0
         deletions = 0
         commits = 0
-        print("Getting total number of commits, code additions and deletions for {}..".format(self.user))
+        print(f'Getting total number of commits, code additions and deletions for {self.user}..')
         repos = self.get_repos()
         total_repos = len(repos)
-        print("Found %s repos." % total_repos)
+        print(f'Found {total_repos} repos.')
         print_progress_bar(0, total_repos)
         for i, item in enumerate(repos):
-            r = self.session.get(url="{}/repos/{}/stats/contributors".format(BASE_URL, item['full_name']))
+            r = self.session.get(url=f"{BASE_URL}/repos/{item['full_name']}/stats/contributors")
             if r.status_code is not requests.codes.ok:
                 continue
             stats = r.json()[0]
@@ -85,33 +85,34 @@ class GitHub:
             print_progress_bar(i + 1, total_repos)
 
         print("Finished")
-        print("Total number of commits: {}".format(commits))
-        print("Total number of code additions: {}".format(additions))
-        print("Total number of code deletions: {}".format(deletions))
-        print("NOTE: These stats might not be completely accurate.")
-        print("GitHub will only track contributions when the following is met:")
-        print("- The email address used for the commits is associated with this GitHub account.")
-        print("- Commits are in the repo's default branch (usually master) or "
-              "gh-pages for repos with project sites.")
-        print("- At least one of the following must be true: "
-              "User is a collaborator, forked the repo, opened a pull request or issue, starred the repository.")
-        print("- If it is a fork, it will not count unless the commits are added as a pull request in the parent"
-              " repository, or detaching the fork and turning it into its own standalone repository.")
-        print("Also note that GitHub cache contributions to save bandwidth. "
-              "You should run this one more time just in case some data has not been fetched in a while"
-              " for a potentially more accurate result.")
+        print(f'Total number of commits: {commits}')
+        print(f'Total number of code additions: {additions}')
+        print(f'Total number of code deletions: {deletions}')
+        print("""
+        NOTE: These stats might not be completely accurate.
+        GitHub will only track contributions when the following is met:
+        - The email address used for the commits is associated with this GitHub account.
+        - Commits are in the repo's default branch (usually master) or gh-pages for repos with project sites.
+        - At least one of the following must be true: 
+          User is a collaborator, forked the repo, opened a pull request or issue, starred the repository.
+        - If it is a fork, it will not count unless the commits are added as a pull request in the parent
+          repository, or detaching the fork and turning it into its own standalone repository.
+        Also note that GitHub cache contributions to save bandwidth.
+        You should run this one more time just in case some data has not been fetched in a while
+        for a potentially more accurate result.
+        """)
 
     def get_repos(self):
         if self.authorized:
             ret = []
-            r = self.session.get(url="{}/user/repos".format(BASE_URL))
+            r = self.session.get(url=f'{BASE_URL}/user/repos')
             link = str(r.headers['link'])
             first = link[link.find('next'):]
             result = first[first.find('page'):]
             total_pages = int(result[5])
             current_page = 1
             while current_page < total_pages:
-                r = self.session.get(url="{}/user/repos?per_page=100&page={}".format(BASE_URL, current_page))
+                r = self.session.get(url=f'{BASE_URL}/user/repos?per_page=100&page={current_page}')
                 if r.status_code is not requests.codes.ok:
                     continue
                 ret += r.json()
@@ -130,7 +131,7 @@ def print_progress_bar(iteration, total):
     percent = ("{0:." + str(1) + "f}").format(100 * (iteration / float(total)))
     filled_length = int(50 * iteration // total)
     bar = '█' * filled_length + '-' * (50 - filled_length)
-    print('{} |{}| {}% {}'.format('Progress:', bar, percent, 'Complete'), end="\r")
+    print(f'Progress: |{bar}| {percent}% Complete', end="\r")
     if iteration == total:
         print()
 

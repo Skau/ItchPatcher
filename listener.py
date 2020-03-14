@@ -36,14 +36,13 @@ def webhook():
 def upload(file_path, repository_name):
     config_parser.read('config.ini')
     if repository_name not in config_parser:
-        print("{} is not setup yet. Please enter the itch project name. (ex: user/game:platform)".format(repository_name))
+        print(f'{repository_name} is not setup yet. Please enter the itch project name. (ex: user/game:platform)')
         project_name = input()
         config_parser[repository_name] = {'project': project_name}
         with open('config.ini', 'w') as configfile:
             config_parser.write(configfile)
     print("Pushing via butler...")
-    push = "butler push \"{}\" {}".format(file_path, config_parser[repository_name]['project'])
-    os.system(push)
+    os.system(f"butler push \"{file_path}\" {config_parser[repository_name]['project']}")
     print("Butler push finished.")
 
 
@@ -63,7 +62,7 @@ def authorize():
     config_parser.read('config.ini')
     token = config_parser['DEFAULT']['token']
     if github.authorize(token):
-        print("Authorization successful! Authorized as {}".format(github.user))
+        print(f'Authorization successful! Authorized as {github.user}')
     else:
         print("Error: Personal access token is not usable.")
         print("Please update config.ini with a legit personal access token.")
