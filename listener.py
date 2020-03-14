@@ -36,45 +36,44 @@ def webhook():
 def upload(file_path, repository_name):
     config_parser.read('config.ini')
     if repository_name not in config_parser:
-        print(repository_name + " is not setup yet. Please enter the itch project name. (ex: user/game:platform)")
+        print("{} is not setup yet. Please enter the itch project name. (ex: user/game:platform)".format(repository_name))
         project_name = input()
         config_parser[repository_name] = {'project': project_name}
         with open('config.ini', 'w') as configfile:
             config_parser.write(configfile)
     print("Pushing via butler...")
-    os.system("butler push " + "\"" + file_path + "\"" + " " + config_parser[repository_name]['project'])
+    push = "butler push \"{}\" {}".format(file_path, config_parser[repository_name]['project'])
+    os.system(push)
     print("Butler push finished.")
 
 
 def check_token():
     if not os.path.exists('config.ini'):
-        f = open('config.ini', "w+")
-        f.close()
-        config_parser.read("config.ini")
-        print("Config file not setup. Please enter you personal access token")
-        token = input()
-        config_parser['DEFAULT'] = {'token': token}
-        with open('config.ini', 'w') as configfile:
-            config_parser.write(configfile)
-        configfile.close()
+        with open('config.ini', 'w+') as file:
+            config_parser.read(file)
+            print("Config file not setup. Please enter you personal access token:")
+            token = input()
+            config_parser['DEFAULT'] = {'token': token}
+            config_parser.write(file)
+            file.seek(0)
     authorize()
 
 
 def authorize():
-    if github.authorize(config_parser=config_parser):
-        print("Authorization successful! Authorized as " + github.user)
+    config_parser.read('config.ini')
+    token = config_parser['DEFAULT']['token']
+    if github.authorize(token):
+        print("Authorization successful! Authorized as {}".format(github.user))
     else:
-        print("Personal access token is not valid.")
+        print("Error: Personal access token is not usable.")
         print("Please update config.ini with a legit personal access token.")
 
 
 def readme():
-    if os.path.exists('README.md'):
-        file = open('README.md', 'r')
-        for x in file:
-            print(x)
-        file.close()
-    else:
+    try:
+        with open('README.md') as file:
+            print(file.read())
+    except FileNotFoundError:
         print("Could not find readme file.")
 
 
