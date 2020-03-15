@@ -27,7 +27,7 @@ Example using ngrok:
 When the webhook is setup you can download or clone this project.
 Then run *pip install -r requirements.txt* to install required packages.
 
-Finally run listener.py.
+Finally run run.py.
 
 The first time running, the ItchPatcher will ask for your personal access token. 
 This is so it will be possible to access your private repositories.
@@ -46,8 +46,8 @@ This is what butler recommends anyways for faster uploads.
 
 ## Arguments
 
-- *$ listener.py -h* - print arguments available
-- *$ listener.py -run* - will start the listening server. This is not strictly needed (not passing any arguments will do the same thing), it's just there for the sake of completeness.
-- *$ listener.py -readme* - will print this readme
-- *$ listener.py -itch -repo -path* - will use the itch project associated with the repo, or prompt you to add it if not there, in config.ini and patch the project with the specified file directly. This allows you to use the service without the webhook part, just as a shortcut instead of using butler directly. Example: -itch -repo -Skau/ItchPatcher -path "path/to/file/file.zip" 
-- *$ listener.py -stats* - will iterate through all GitHub repositores and list overall commits, code additions and code deletions.
+- *$ run.py -h* - print arguments available
+- *$ run.py -run* - will start the listening server. This is not strictly needed (not passing any arguments will do the same thing), it's just there for the sake of completeness.
+- *$ run.py -readme* - will print this readme.
+- *$ run.py -itch -repo -path* - will use the itch project associated with the repo, or prompt you to add it if not there, in config.ini and patch the project with the specified file directly. This allows you to use the service without the webhook part, just as a shortcut instead of using butler directly. Example: -itch -repo -Skau/ItchPatcher -path "path/to/file/file.zip" 
+- *$ run.py -stats* - will iterate through all GitHub repositores and list overall commits, code additions and code deletions.

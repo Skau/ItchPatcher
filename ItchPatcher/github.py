@@ -1,7 +1,9 @@
 import os
-
 import requests
 from collections import namedtuple
+from configparser import ConfigParser
+
+config_parser = ConfigParser()
 
 BASE_URL = "https://api.github.com"
 
@@ -14,17 +16,32 @@ class GitHub:
         self.session.headers.update({'User-Agent': 'Itch Updater'})
         self.session.headers.update({'Accept': 'application/vnd.github.v3+json'})
         self.session.headers.update({'Content-Type': 'application/json'})
-        self.authorized = False
         self.user = ""
+        self.authorized = self.authorize()
 
-    def authorize(self, token):
+    def authorize(self,):
+        if not os.path.exists('config.ini'):
+            with open('config.ini', 'w+') as file:
+                config_parser.read(file)
+                print("Config file not setup. Please enter you personal access token:")
+                token = input()
+                config_parser['DEFAULT'] = {'token': token}
+                config_parser.write(file)
+                file.seek(0)
+        config_parser.read('config.ini')
+        token = config_parser['DEFAULT']['token']
         self.session.auth = ('access_token', token)
         r = self.session.get(url="{}/user".format(BASE_URL))
         self.authorized = r.status_code == requests.codes.ok
         if self.authorized:
             json = r.json()
             self.user = json['login']
-        return self.authorized
+            print(f'Authorization successful! Authorized as {self.user}')
+            return True
+        else:
+            print("Error: Personal access token is not usable.")
+            print("Please update config.ini with a legit personal access token.")
+            return False
 
     def download_file(self, data):
         if not self.authorized:
