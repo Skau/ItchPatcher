@@ -12,7 +12,7 @@ MarkupSafe==1.1.1
 pipenv==2018.11.26
 requests==2.23.0
 six==1.14.0
-urllib3==1.25.8
+urllib3==1.26.5
 virtualenv==20.0.10
 virtualenv-clone==0.5.3
 Werkzeug==1.0.0
